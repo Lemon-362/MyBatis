@@ -21,6 +21,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src/mybatis_2_config/conf" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/mybatis_3_mapper/conf" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/mybatis_4_DynamicSQL/conf" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/mybatis_5_cache/conf" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

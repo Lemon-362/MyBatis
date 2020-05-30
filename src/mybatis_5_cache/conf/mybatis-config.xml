@@ -14,7 +14,7 @@
     </settings>
 
     <typeAliases>
-        <package name="mybatis_4_DynamicSQL.com.Lemon.mybatis.bean"/>
+        <package name="mybatis_5_cache.com.Lemon.mybatis.bean"/>
     </typeAliases>
 
     <environments default="development">
@@ -43,7 +43,7 @@
     </databaseIdProvider>
 
     <mappers>
-        <mapper resource="mybatis_4_DynamicSQL/conf/mybatis/mapper/EmployeeMapperDynamicSQL.xml"/>
+        <mapper resource="mybatis_5_cache/conf/mybatis/mapper/EmployeeMapper.xml"/>
 
     </mappers>
 

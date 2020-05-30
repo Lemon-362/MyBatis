@@ -115,17 +115,17 @@
             </if>
         </set>
         <!-- 或者使用trim标签去除逗号（了解） -->
-<!--        <trim prefix="set" suffixOverrides=",">-->
-<!--            <if test="lastName!=null">-->
-<!--                last_name=#{lastName},-->
-<!--            </if>-->
-<!--            <if test="email!=null">-->
-<!--                email=#{email},-->
-<!--            </if>-->
-<!--            <if test="gender!=null">-->
-<!--                gender=#{gender},-->
-<!--            </if>-->
-<!--        </trim>-->
+        <!--        <trim prefix="set" suffixOverrides=",">-->
+        <!--            <if test="lastName!=null">-->
+        <!--                last_name=#{lastName},-->
+        <!--            </if>-->
+        <!--            <if test="email!=null">-->
+        <!--                email=#{email},-->
+        <!--            </if>-->
+        <!--            <if test="gender!=null">-->
+        <!--                gender=#{gender},-->
+        <!--            </if>-->
+        <!--        </trim>-->
         where id=#{id}
     </update>
 
@@ -134,7 +134,7 @@
         public List<Employee> getEmpsByConditionForeach(List<Integer> ids);
     -->
     <select id="getEmpsByConditionForeach" resultType="mybatis_4_DynamicSQL.com.Lemon.mybatis.bean.Employee">
-        select * from mybatis.tbl_employee
+        select * from mybatis.tbl_employee <!-- where id in (1, 2, 3, 4) -->
         <!-- foreach
             （1）collection：指定要遍历的集合名称
             （2）item：将当前遍历集合得到的元素赋值给指定的变量
@@ -150,5 +150,53 @@
             #{item_id}
         </foreach>
     </select>
+
+    <!-- TODO 4.1.5 foreach批量保存
+            MySQL下批量保存：可以用foreach遍历，mysql支持 values(),() 的语法
+    -->
+    <!-- public void addEmps(@Param("emps")List<Employee> emps); -->
+    <insert id="addEmps">
+        INSERT INTO mybatis.tbl_employee(last_name, email, gender, d_id)
+        VALUES<!-- ('tom', 'tom@126.com', '0', 1),('frank', 'frank@126.com', '1', 2) -->
+            <foreach collection="emps" item="emp" separator=",">
+                (#{emp.lastName}, #{emp.email}, #{emp.gender}, #{emp.dept.id})
+            </foreach>
+    </insert>
+
+    <!-- TODO 4.2 MyBatis的两个内置参数：
+        不只是方法传递过来的参数可以被用来判断，取值。。。
+        MyBatis默认还有两个内置参数：
+        （1）_parameter：代表整个参数
+                对于单个参数：_parameter就是这个参数
+                对于多个参数：参数会被封装成一个map，那么_parameter就是这个map
+        （2）_databaseId：
+            如果配置了DatabaseInProvider标签，那么_databaseId就是代表当前数据库的别名
+    -->
+    <!-- public List<Employee> getEmpsTestInnerParam(Employee employee); -->
+    <select id="getEmpsTestInnerParam" resultType="mybatis_4_DynamicSQL.com.Lemon.mybatis.bean.Employee">
+        <!-- TODO 4.3 bind：可以将OGNL表达式的值绑定到一个变量中，方便后来引用这个变量的值
+            在模糊查询时，一般是在传入的值中设置 %e%
+            但是现在我们希望就传入 e，%能够在内部自己拼接上
+            （1）name：后续引用变量的名字
+            （2）value：用于拼接的表达式
+         -->
+        <bind name="_lastName" value="'%'+lastName+'%'"/>
+        <if test="_databaseId=='mysql'">
+            select * from mybatis.tbl_employee
+            <if test="_parameter!=null"> <!-- _parameter就表示employee对象 -->
+                where last_name like #{_lastName}
+            </if>
+        </if>
+    </select>
+
+    <!-- TODO 4.4 sql标签：抽取可重用的sql片段，方便后面引用
+            1. sql抽取：将经常要查询或插入用的列名抽取出来，方面引用
+            2. 在sql语句中，可以用include来引用已经抽取出来的sql
+            3. include内部还可以自定义property，sql标签内部就能使用自定义的属性
+                include-property的取值的正确方式：${prop}，不能用#{}
+    -->
+<!--    <sql id="insertColumn">-->
+<!--        employee_id,last_name,email-->
+<!--    </sql>-->
 
 </mapper>

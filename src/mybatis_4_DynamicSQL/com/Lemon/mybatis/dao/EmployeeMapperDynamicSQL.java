@@ -25,4 +25,10 @@ public interface EmployeeMapperDynamicSQL {
     // 4.1.4 查询员工id在给定集合中的员工信息
     public List<Employee> getEmpsByConditionForeach(@Param("ids")List<Integer> ids);
 
+    // 4.1.5 foreach批量保存
+    public void addEmps(@Param("emps")List<Employee> emps);
+
+    // 4.2 MyBatis的两个内置参数
+    public List<Employee> getEmpsTestInnerParam(Employee employee);
+
 }

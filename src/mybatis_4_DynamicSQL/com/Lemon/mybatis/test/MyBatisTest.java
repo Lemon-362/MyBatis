@@ -1,5 +1,6 @@
 package mybatis_4_DynamicSQL.com.Lemon.mybatis.test;
 
+import mybatis_4_DynamicSQL.com.Lemon.mybatis.bean.Department;
 import mybatis_4_DynamicSQL.com.Lemon.mybatis.bean.Employee;
 import mybatis_4_DynamicSQL.com.Lemon.mybatis.dao.EmployeeMapperDynamicSQL;
 import org.apache.ibatis.io.Resources;
@@ -10,6 +11,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -103,7 +105,7 @@ public class MyBatisTest {
         try {
             EmployeeMapperDynamicSQL mapper = openSession.getMapper(EmployeeMapperDynamicSQL.class);
 
-            /**
+            /** 4.1.4
              * （4）foreach
              */
             // where id in ( ? , ? , ? , ? )
@@ -111,6 +113,59 @@ public class MyBatisTest {
             for (Employee employee : list) {
                 System.out.println(employee);
             }
+
+        } finally {
+            openSession.close();
+        }
+    }
+
+    @Test
+    public void testDynamicSQL2() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession openSession = sqlSessionFactory.openSession();
+
+        try {
+            EmployeeMapperDynamicSQL mapper = openSession.getMapper(EmployeeMapperDynamicSQL.class);
+
+            /**
+             * 4.1.5 foreach批量保存
+             */
+            // INSERT INTO mybatis.tbl_employee(last_name, email, gender, d_id) VALUES (?, ?, ?, ?) , (?, ?, ?, ?)
+            List<Employee> emps = new ArrayList<>();
+            emps.add(new Employee(null, "tom", "tom@126.com", "0", new Department(1)));
+            emps.add(new Employee(null, "frank", "frank@126.com", "1", new Department(2)));
+
+            mapper.addEmps(emps);
+
+            openSession.commit();
+
+        } finally {
+            openSession.close();
+        }
+    }
+
+    @Test
+    public void testInnerParam() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession openSession = sqlSessionFactory.openSession();
+
+        try {
+            EmployeeMapperDynamicSQL mapper = openSession.getMapper(EmployeeMapperDynamicSQL.class);
+
+            /**
+             * 4.2 MyBatis的两个内置参数
+             */
+            Employee employee1 = new Employee();
+//            employee1.setLastName("%e%");
+            employee1.setLastName("e");
+
+            List<Employee> list = mapper.getEmpsTestInnerParam(employee1);
+
+            for (Employee employee : list) {
+                System.out.println(employee);
+            }
+
+            openSession.commit();
 
         } finally {
             openSession.close();

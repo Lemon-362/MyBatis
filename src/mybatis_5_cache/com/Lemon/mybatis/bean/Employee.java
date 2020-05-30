@@ -1,6 +1,5 @@
-package mybatis_4_DynamicSQL.com.Lemon.mybatis.bean;
+package mybatis_5_cache.com.Lemon.mybatis.bean;
 
-import mybatis_4_DynamicSQL.com.Lemon.mybatis.bean.Department;
 import org.apache.ibatis.type.Alias;
 
 @Alias("emp")

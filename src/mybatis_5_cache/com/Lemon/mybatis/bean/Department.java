@@ -1,6 +1,4 @@
-package mybatis_4_DynamicSQL.com.Lemon.mybatis.bean;
-
-import mybatis_4_DynamicSQL.com.Lemon.mybatis.bean.Employee;
+package mybatis_5_cache.com.Lemon.mybatis.bean;
 
 import java.util.List;
 
