@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mybatis_4_DynamicSQL.com.Lemon.mybatis.dao.EmployeeMapperDynamicSQL">
+    <!-- TODO 4.1 DynamicSQL 动态SQL
+        （1）if：判断
+        （2）choose-when-otherwise：分支选择switch-case
+        （3）trim：字符串截取 （where（封装查询条件），set（封装修改条件））
+        （4）foreach
+    -->
+
+    <!-- TODO 4.1.1 查询员工，要求：查询哪个字段，那么查询条件就带上这个字段的值 -->
+    <!-- （1）if：
+        public List<Employee> getEmpsByConditionIf(Employee employee);
+    -->
+    <select id="getEmpsByConditionIf" resultType="mybatis_4_DynamicSQL.com.Lemon.mybatis.bean.Employee">
+        select *
+        from mybatis.tbl_employee
+        /*where 1=1*/
+        <!-- TODO where标签：解决sql拼串问题 -->
+        <where>
+            <!-- TODO test：判断表达式（OGNL) 参照PPT或官方文档
+                    test表达式中的值（id）是从参数#{id}中取值进行判断
+                 遇到特殊符号应写转义字符：
+                 1. "：&quot; ==> &quot;&quot; == ""
+                 2. &：&amp; ==> &amp;&amp; == &&
+            -->
+            <if test="id!=null">
+                id = #{id}
+            </if>
+            <if test="lastName!=null &amp;&amp; lastName!=&quot;&quot;">
+                and last_name like #{lastName}
+            </if>
+            <if test="email!=null and email.trim()!=&quot;&quot;">
+                and email = #{email}
+            </if>
+            <!-- OGNL会进行字符串和数字的转换判断 "0"==0 -->
+            <if test="gender==0 or gender==1">
+                and gender = #{gender};
+            </if>
+        </where>
+    </select>
+
+    <!-- （2）trim：
+        public List<Employee> getEmpsByConditionTrim(Employee employee);
+    -->
+    <select id="getEmpsByConditionTrim" resultType="mybatis_4_DynamicSQL.com.Lemon.mybatis.bean.Employee">
+        select *
+        from mybatis.tbl_employee
+        <!-- 如果是后面多出and或or，where标签不能解决
+            TODO 解决办法：trim标签 trim标签体中是整个字符串拼串后的结果
+            （1）prefix：前缀，给拼串后的字符串加一个前缀
+            （2）prefixOverrides：前缀覆盖，去掉整个字符串前面的字符
+            （3）suffix：后缀，给拼串后的字符串加一个后缀
+            （4）suffixOverrides：后缀覆盖，去掉整个字符串后面的字符
+        -->
+        <trim prefix="where" suffixOverrides="and">
+            <if test="id!=null">
+                id = #{id} and
+            </if>
+            <if test="lastName!=null &amp;&amp; lastName!=&quot;&quot;">
+                last_name like #{lastName} and
+            </if>
+            <if test="email!=null and email.trim()!=&quot;&quot;">
+                email = #{email} and
+            </if>
+            <!-- OGNL会进行字符串和数字的转换判断 "0"==0 -->
+            <if test="gender==0 or gender==1">
+                gender = #{gender};
+            </if>
+        </trim>
+    </select>
+
+    <!-- TODO 4.1.2 如果带了id就用id查，如果带了lastName就用lastName查，只会查询一个 -->
+    <!-- （3）choose-when-otherwise：
+        public List<Employee> getEmpsByConditionChoose(Employee employee);
+    -->
+    <select id="getEmpsByConditionChoose" resultType="mybatis_4_DynamicSQL.com.Lemon.mybatis.bean.Employee">
+        select *
+        from mybatis.tbl_employee
+        <where>
+            <choose>
+                <when test="id!=null">
+                    id=#{id}
+                </when>
+                <when test="lastName!=null">
+                    last_name like #{lastName}
+                </when>
+                <when test="email!=null">
+                    email=#{email}
+                </when>
+                <otherwise>
+                    gender=0
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <!-- TODO 4.1.3 根据id更新员工信息 -->
+    <!-- set：public void updateEmp(Employee employee); -->
+    <update id="updateEmp">
+        update mybatis.tbl_employee
+        <!-- set标签：可以防止每个sql语句后的逗号 -->
+        <set>
+            <if test="lastName!=null">
+                last_name=#{lastName},
+            </if>
+            <if test="email!=null">
+                email=#{email},
+            </if>
+            <if test="gender!=null">
+                gender=#{gender},
+            </if>
+        </set>
+        <!-- 或者使用trim标签去除逗号（了解） -->
+<!--        <trim prefix="set" suffixOverrides=",">-->
+<!--            <if test="lastName!=null">-->
+<!--                last_name=#{lastName},-->
+<!--            </if>-->
+<!--            <if test="email!=null">-->
+<!--                email=#{email},-->
+<!--            </if>-->
+<!--            <if test="gender!=null">-->
+<!--                gender=#{gender},-->
+<!--            </if>-->
+<!--        </trim>-->
+        where id=#{id}
+    </update>
+
+    <!-- TODO 4.1.4 查询员工id在给定集合中的员工信息 -->
+    <!-- （4）foreach：
+        public List<Employee> getEmpsByConditionForeach(List<Integer> ids);
+    -->
+    <select id="getEmpsByConditionForeach" resultType="mybatis_4_DynamicSQL.com.Lemon.mybatis.bean.Employee">
+        select * from mybatis.tbl_employee
+        <!-- foreach
+            （1）collection：指定要遍历的集合名称
+            （2）item：将当前遍历集合得到的元素赋值给指定的变量
+            （3）separator：元素之间的分隔符
+            （4）open：将遍历得到的所有结果，拼接一个开始的字符
+            （5）close：将遍历得到的所有结果，拼接一个结束的字符
+            （6）index：
+                遍历list时，index：索引，item：当前值
+                遍历map时，index：map的key，item：map的value
+            #{变量名}就能取出变量的值，也就是当前遍历集合得到的元素
+        -->
+        <foreach collection="ids" item="item_id" separator="," open="where id in (" close=")">
+            #{item_id}
+        </foreach>
+    </select>
+
+</mapper>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="mybatis_3_mapper.com.Lemon.mybatis.dao.DepartmentMapper">
+    <!-- 3.9.2 使用association进行分步查询：dept的Mapper -->
+    <!-- public Department getDeptById(Integer id); -->
+    <select id="getDeptById" resultType="mybatis_3_mapper.com.Lemon.mybatis.bean.Department">
+        select id, dept_name departmentName
+        from mybatis.tbl_dept
+        where id = #{id}
+    </select>
+
+    <!-- TODO 3.9.4 场景二 -->
+    <!-- private Integer id;
+         private String departmentName;
+         private List<Employee> emps; TODO 注意：这里将emp封装成了List类型，所以不能用association
+    （部门信息）did  dept_name  |（员工信息）eid  last_name  email    gender
+    -->
+    <!-- collection嵌套结果集的方式，定义关联的List集合类型元素的封装规则 -->
+    <resultMap id="MyDept" type="mybatis_3_mapper.com.Lemon.mybatis.bean.Department">
+        <id column="did" property="id"/>
+        <result column="dept_name" property="departmentName"/>
+        <!-- collection：定义“集合”类型的属性的封装规则
+            （1）property：集合属性名称
+            （2）ofType：指定集合里面元素的类型
+        -->
+        <collection property="emps" ofType="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+            <!-- 定义这个集合中元素的封装规则 -->
+            <id column="eid" property="id"/>
+            <result column="last_name" property="lastName"/>
+            <result column="email" property="email"/>
+            <result column="gender" property="gender"/>
+        </collection>
+    </resultMap>
+
+    <!-- public Department getDeptByIdPlus(Integer id); -->
+    <select id="getDeptByIdPlus" resultMap="MyDept">
+        SELECT d.id        did,
+               d.dept_name dept_name,
+               e.id        eid,
+               e.last_name last_name,
+               e.email     email,
+               e.gender    gender
+        FROM mybatis.tbl_dept d
+                 LEFT JOIN mybatis.tbl_employee e
+                           ON d.id = e.d_id
+        WHERE d.id = 1
+    </select>
+
+    <!-- TODO 3.9.5 使用collection进行分步查询
+        SELECT * FROM tbl_dept WHERE id=1
+        SELECT * FROM tbl_employee WHERE d_id=1
+    -->
+    <resultMap id="MyDeptStep" type="mybatis_3_mapper.com.Lemon.mybatis.bean.Department">
+        <id column="id" property="id"/>
+        <result column="dept_name" property="departmentName"/>
+        <collection property="emps"
+                    select="mybatis_3_mapper.com.Lemon.mybatis.dao.EmployeeMapperPlus.getEmpsByDeptId"
+                    column="{deptId=id}"
+                    fetchType="lazy"/>
+    </resultMap>
+    <!-- public Department getDeptByIdStep(Integer id); -->
+    <select id="getDeptByIdStep" resultMap="MyDeptStep">
+        select id, dept_name departmentName
+        from mybatis.tbl_dept
+        where id = #{id}
+    </select>
+
+    <!-- 扩展：
+    1. 在collection中将多列column的值传递过去：
+       将多列的值封装成map ==> column="{key1=column1,key2=column2,...}
+    2. fetchType="lazy"：表示使用延迟加载（默认）
+       fetchType="eager"：立即加载 ==> TODO 可以在这里配置立即加载，但是如果要延迟加载，必须在全局配置文件中配置
+     -->
+
+</mapper>

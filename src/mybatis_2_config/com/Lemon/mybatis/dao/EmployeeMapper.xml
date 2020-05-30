@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 一、sql映射文件 -->
+<!--<mapper namespace="com.Lemon.mybatis.bean.EmployeeMapper">
+    &lt;!&ndash;
+    1. namespace：名称空间
+    2. select：
+        1）id：唯一标识
+        2）resultType：返回值类型
+        3）#{id}：从传递过来的参数中取出id值
+    &ndash;&gt;
+    <select id="selectBlog" resultType="mybatis_1_HelloWorld.com.Lemon.mybatis.bean.Employee">
+            select id,last_name lastName,email,gender from tbl_employee where id = #{id}
+    </select>
+</mapper>-->
+
+<!-- 二、接口和xml配置文件动态绑定的功能 -->
+<mapper namespace="mybatis_2_config.com.Lemon.mybatis.dao.EmployeeMapper">
+<!--
+    1. namespace：名称空间，TODO 指定为接口的全类名
+       ——从而将接口文件和sql映射文件绑定
+    2. 接口中的getEmpById()方法的功能和select语句功能是相同的
+       所以可以将select的id改成接口方法名
+       ——从而将接口方法和select标签绑定
+    -->
+    <!-- TODO 3. 通过设置typeAliases，可以为java类型起别名
+        （1）typeAlias：默认java类名小写 employee
+                全类名：mybatis_2_config.com.Lemon.mybatis.bean.Employee
+                默认别名：employee
+                指定别名：emp
+        （2）package：默认java类名小写 employee
+                可以在指定类中添加注解@Alias为其指定新的别名 @Alias("emp")
+        TODO 推荐使用全类名！！！
+    -->
+    <select id="getEmpById" resultType="mybatis_2_config.com.Lemon.mybatis.bean.Employee">
+            <!--select id,last_name lastName,email,gender from tbl_employee where id = #{id}-->
+            <!-- TODO 2. 通过开启mapUnderscoreToCamelCase，可以自动识别 -->
+            select * from tbl_employee where id = #{id}
+    </select>
+</mapper>

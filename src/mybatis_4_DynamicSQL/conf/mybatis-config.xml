@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<!-- 全局配置文件 -->
+<configuration>
+    <properties resource="db.properties"/>
+
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
+    <typeAliases>
+        <package name="mybatis_4_DynamicSQL.com.Lemon.mybatis.bean"/>
+    </typeAliases>
+
+    <environments default="development">
+        <environment id="test">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED"/>
+        </environment>
+
+        <environment id="development">
+            <!-- 事务管理器 -->
+            <transactionManager type="JDBC"/>
+            <!-- 数据源信息 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="mybatis_4_DynamicSQL/conf/mybatis/mapper/EmployeeMapperDynamicSQL.xml"/>
+
+    </mappers>
+
+</configuration>

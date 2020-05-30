@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mybatis_2_config.com.Lemon.mybatis.dao.EmployeeMapper">
+    <!-- TODO 3. 通过设置typeAliases，可以为java类型起别名
+        （1）typeAlias：默认java类名小写 employee
+                全类名：mybatis_2_config.com.Lemon.mybatis.bean.Employee
+                默认别名：employee
+                指定别名：emp
+        （2）package：默认java类名小写 employee
+                可以在指定类中添加注解@Alias为其指定新的别名 @Alias("emp")
+        TODO 推荐使用全类名！！！
+    -->
+    <select id="getEmpById" resultType="mybatis_2_config.com.Lemon.mybatis.bean.Employee">
+            <!--select id,last_name lastName,email,gender from tbl_employee where id = #{id}-->
+            <!-- TODO 2. 通过开启mapUnderscoreToCamelCase，可以自动识别 -->
+            select * from tbl_employee where id = #{id}
+    </select>
+</mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 一、sql映射文件 -->
+<!--<mapper namespace="com.Lemon.mybatis.bean.EmployeeMapper">
+    &lt;!&ndash;
+    1. namespace：名称空间
+    2. select：
+        1）id：唯一标识
+        2）resultType：返回值类型
+        3）#{id}：从传递过来的参数中取出id值
+    &ndash;&gt;
+    <select id="selectBlog" resultType="mybatis_1_HelloWorld.com.Lemon.mybatis.bean.Employee">
+            select id,last_name lastName,email,gender from tbl_employee where id = #{id}
+    </select>
+</mapper>-->
+
+<!-- 二、接口和xml配置文件动态绑定的功能 -->
+<mapper namespace="mybatis_3_mapper.com.Lemon.mybatis.dao.EmployeeMapper">
+<!--
+    1. namespace：名称空间，TODO 指定为接口的全类名
+       ——从而将接口文件和sql映射文件绑定
+    2. 接口中的getEmpById()方法的功能和select语句功能是相同的
+       所以可以将select的id改成接口方法名
+       ——从而将接口方法和select标签绑定
+    -->
+    <!-- TODO 3. 通过设置typeAliases，可以为java类型起别名
+        （1）typeAlias：默认java类名小写 employee
+                全类名：mybatis_2_config.com.Lemon.mybatis.bean.Employee
+                默认别名：employee
+                指定别名：emp
+        （2）package：默认java类名小写 employee
+                可以在指定类中添加注解@Alias为其指定新的别名 @Alias("emp")
+        TODO 推荐使用全类名！！！
+    -->
+    <select id="getEmpById" resultType="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+            <!--select id,last_name lastName,email,gender from tbl_employee where id = #{id}-->
+            <!-- TODO 2. 通过开启mapUnderscoreToCamelCase，可以自动识别 -->
+            select * from tbl_employee where id = #{idsad}
+    </select>
+
+    <!-- TODO 3.2 CRUD的sql语句  parameterType可省略 -->
+    <!-- TODO 3.4 获取自增主键的值
+          （1）useGeneratedKeys="true"：使用自增主键获取主键值策略
+          （2）keyProperty：指定对应的主键属性，也就是mybatis获取到主键后，将这个值封装给javaBean的哪个属性
+    -->
+    <!-- 3.2.1 public void addEmp(Employee employee); -->
+    <insert id="addEmp" parameterType="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee"
+    useGeneratedKeys="true" keyProperty="id">
+        insert into tbl_employee(last_name,email,gender)
+        values(#{lastName},#{email},#{gender})
+    </insert>
+
+    <!-- 3.2.2 public void updateEmp(Employee employee); -->
+    <update id="updateEmp">
+        update tbl_employee
+        set last_name=#{lastName},email=#{email},gender=#{gender}
+        where id=#{id}
+    </update>
+
+    <!-- 3.2.3 public void deleteEmp(Integer id); -->
+    <delete id="deleteEmp">
+        delete from tbl_employee
+        where id=#{id}
+    </delete>
+
+    <!-- TODO 3.5 多个参数
+    -->
+    <!-- 3.5.1 public Employee getEmpByIdAndLastName(Integer id, String lastName); -->
+    <select id="getEmpByIdAndLastName" resultType="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+        <!-- 解决办法一 -->
+        <!-- select * from tbl_employee where id=#{param1} and last_name=#{param2} -->
+        <!-- 解决办法二：命名参数 -->
+        select * from tbl_employee where id=#{id} and last_name=#{lastName}
+    </select>
+
+    <!-- 3.5.2 public Employee getEmpByMap(Map<String, Object> map); -->
+    <select id="getEmpByMap" resultType="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+        <!-- select * from tbl_employee where id=#{id} and last_name=#{lastName} -->
+        <!-- TODO 3.6 参数值的获取 #{}和${}-->
+        select * from ${tableName} where id=${id} and last_name=#{lastName}
+    </select>
+
+    <!-- TODO 3.7 select -->
+    <!-- 3.7.1 public List<Employee> getEmpsByLastNameLike(String lastName);
+        TODO resultType：如果返回的是一个集合，resultType要写集合中元素的类型 —— Employee
+    -->
+    <select id="getEmpsByLastNameLike" resultType="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+        select * from tbl_employee where last_name like #{lastName}
+    </select>
+
+    <!-- 3.7.2 public Map<String, Object> getEmpByIdReturnMap(Integer id);
+        TODO resultType：如果返回的是一个Map，resultType要写map
+    -->
+    <select id="getEmpByIdReturnMap" resultType="map">
+        select * from tbl_employee where id=#{id}
+    </select>
+
+    <!-- 3.7.3 public Map<Integer, Employee> getEmpByLastNameLikeReturnMap(String lastName);
+        TODO resultType：如果返回的是一个Map，resultType要写map中存储的value对象类型
+    -->
+    <select id="getEmpByLastNameLikeReturnMap" resultType="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+        select * from tbl_employee where last_name like #{lastName}
+    </select>
+
+</mapper>

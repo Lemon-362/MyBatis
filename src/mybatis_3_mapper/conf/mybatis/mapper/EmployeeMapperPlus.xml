@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mybatis_3_mapper.com.Lemon.mybatis.dao.EmployeeMapperPlus">
+
+    <!-- TODO 3.8 ResultMap：自定义结果映射规则 -->
+    <!-- TODO 3.8.1 自定义某个javaBean的封装规则
+            （1）id：唯一标识，方便引用
+            （2）type：自定义规则的Java类型
+     -->
+    <resultMap id="MyEmp" type="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+        <!-- id：定义主键的封装规则
+        （1）column：指定哪一列
+        （2）property：指定对应的javaBean对象属性
+        TODO 映射规则：数据表中列名column <===> java对象的属性名property
+        -->
+        <id column="id" property="id"/>
+        <!-- result：定义普通列的封装规则 -->
+        <result column="last_name" property="lastName"/>
+        <!-- TODO 其他不指定的列会自动封装，但是一般只要写了resultMap，就把全部的映射规则都写上 -->
+        <result column="email" property="email"/>
+        <result column="gender" property="gender"/>
+    </resultMap>
+
+    <!-- 3.8.1 public Employee getEmpById(Integer id);
+        TODO resultMap：自定义结果集映射规则（resultType和resultMap只能用一个）
+    -->
+    <select id="getEmpById" resultMap="MyEmp">
+        select * from mybatis.tbl_employee where id=#{id}
+    </select>
+
+    <!-- TODO 3.9 resultMap关联查询 -->
+    <!-- TODO 3.9.1 场景一：查询Employee的同时查询员工所在的部门 Employee===Department
+        查询结果的列名 ==> 自定义结果集映射规则
+        id  last_name  gender    d_id     did  dept_name （最后两个是Department的属性）
+       TODO 最后两个是在Employee类中定义的Department的属性：private Department dept;
+            方法一（MyDifEmp）：级联属性，即 dept.id（dept类中的属性）
+            方法二（MyDifEmp2）：association，可以指定联合（关联）的javaBean对象
+    -->
+    <resultMap id="MyDifEmp" type="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+        <id column="id" property="id"/>
+        <result column="last_name" property="lastName"/>
+        <result column="gender" property="gender"/>
+        <!-- TODO 法一：级联属性 -->
+        <result column="did" property="dept.id"/>
+        <result column="dept_name" property="dept.departmentName"/>
+    </resultMap>
+
+    <resultMap id="MyDifEmp2" type="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+        <id column="id" property="id"/>
+        <result column="last_name" property="lastName"/>
+        <result column="gender" property="gender"/>
+        <!-- TODO 法二：association：定义单个对象的封装规则（嵌套）
+            （1）property：指定哪个属性是关联的对象
+            （2）javaType：指定关联属性对象的类型（不能省略）
+         -->
+        <association property="dept" javaType="mybatis_3_mapper.com.Lemon.mybatis.bean.Department">
+            <id column="did" property="id"/>
+            <result column="dept_name" property="departmentName"/>
+        </association>
+    </resultMap>
+
+    <!-- public Employee getEmpAndDept(Integer id); -->
+    <select id="getEmpAndDept" resultMap="MyDifEmp2">
+        SELECT e.id id, e.last_name last_name, e.gender gender, e.d_id d_id,
+               d.id did, d.dept_name dept_name
+        FROM mybatis.tbl_employee e, mybatis.tbl_dept d
+        WHERE e.d_id=d.id AND e.id=#{id}
+    </select>
+
+    <!-- TODO 3.9.2 使用association进行分步查询
+        SELECT * FROM tbl_employee WHERE id =1;
+        SELECT * FROM tbl_dept WHERE id=1
+    步骤：
+        1. 按照员工id查询员工信息：id  last_name  gender  email  d_id
+        2. 根据查询到的员工信息中的d_id值，到部门表中查出部门信息：id  dept_name
+        3. 将部门信息设置到查询到的员工中
+    -->
+    <resultMap id="MyEmpByStep" type="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+        <id column="id" property="id"/>
+        <result column="last_name" property="lastName"/>
+        <result column="email" property="email"/>
+        <result column="gender" property="gender"/>
+        <!-- association：定义关联“对象”类型的封装规则
+            （1）select：表明当前属性property是调用select指定的方法查处的结果 （namespace+id）
+            （2）column：指定将哪一列的值传给这个方法
+            TODO 流程：使用select指定的方法（传入column指定的这列参数的值）查出对象，并封装给property属性
+        -->
+        <association property="dept"
+                     select="mybatis_3_mapper.com.Lemon.mybatis.dao.DepartmentMapper.getDeptById"
+                     column="d_id"/>
+    </resultMap>
+
+    <!-- public Employee getEmpByIdStep(Integer id); MyEmpByStep-->
+    <select id="getEmpByIdStep" resultMap="MyEmpByStep">
+        select * from mybatis.tbl_employee where id=#{id}
+    </select>
+
+    <!-- 3.9.6 discriminator鉴别器 -->
+<!--    <select id="getEmpByIdStep" resultMap="MyEmpDis">-->
+<!--        select * from mybatis.tbl_employee where id=#{id}-->
+<!--    </select>-->
+
+    <!-- TODO 3.9.3 分步查询可以使用延迟加载： TODO 延迟加载
+        Employee中含有Dept对象，每次查询Employee对象时，会把dept部门信息一起查询出来
+        TODO 而现在我们可以只在使用时将部门信息再查询出来：分步查询基础上在全局配置中加上两个配置即可
+            1. lazyLoadingEnabled
+            2. aggressiveLazyLoading
+    -->
+    <!-- ==================以上：association============================ -->
+
+    <!-- TODO 3.9.4 场景二：查询部门的时候，将部门对应的所有员工信息也查询出来
+            —— 封装成List集合 ==> collection
+            见DepartmentMapper.xml
+    -->
+
+    <!-- TODO 3.9.5 使用collection进行分步查询 -->
+    <!-- public List<Employee> getEmpsByDeptId(Integer deptId); -->
+    <select id="getEmpsByDeptId" resultType="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+        select * from mybatis.tbl_employee where d_id=#{deptId}
+    </select>
+    <!-- ==================以上：collection============================ -->
+
+    <!-- TODO 3.9.6（了解） 鉴别器：mybatis可以使用discriminator判断某列的值，然后根据某列的值改变封装行为
+        对于封装Employee规则：
+            如果查出的是女生，就把部门信息查询出来，否则不查询
+            如果查出的是男生，就把last_name这一列的值赋值给email
+    -->
+    <resultMap id="MyEmpDis" type="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+        <id column="id" property="id"/>
+        <result column="last_name" property="lastName"/>
+        <result column="email" property="email"/>
+        <result column="gender" property="gender"/>
+        <!-- discriminator鉴别器
+            （1）javaType：需要判断的列的值对应的java类型
+            （2）column：需要判断的列名
+        -->
+        <discriminator javaType="string" column="gender">
+            <!-- 女生 resultType：要封装的结果的类型 TODO resultType不能省略-->
+            <case value="0" resultType="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+                <!-- 定义规则：如果查出的是女生，就把部门信息查询出来，否则不查询 -->
+                <association property="dept"
+                             select="mybatis_3_mapper.com.Lemon.mybatis.dao.DepartmentMapper.getDeptById"
+                             column="d_id"/>
+            </case>
+            <!-- 男生 -->
+            <case value="1" resultType="mybatis_3_mapper.com.Lemon.mybatis.bean.Employee">
+                <!-- 定义规则：如果查出的是男生，就把last_name这一列的值赋值给email -->
+                <id column="id" property="id"/>
+                <result column="last_name" property="lastName"/>
+                <result column="last_name" property="email"/>
+                <result column="gender" property="gender"/>
+            </case>
+        </discriminator>
+    </resultMap>
+
+</mapper>
