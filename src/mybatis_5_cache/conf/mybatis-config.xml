@@ -11,6 +11,8 @@
         <setting name="mapUnderscoreToCamelCase" value="true"/>
         <setting name="lazyLoadingEnabled" value="true"/>
         <setting name="aggressiveLazyLoading" value="false"/>
+        <!-- 开启全局二级缓存配置 -->
+        <setting name="cacheEnabled" value="true"/>
     </settings>
 
     <typeAliases>

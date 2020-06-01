@@ -71,7 +71,7 @@ public class MybatisTest {
         }
     }
 
-    // 公共方法：创建sqlSessionFactory对象
+    // 根据xml配置文件（全局配置文件mybatis-config.xml），创建sqlSessionFactory对象
     public SqlSessionFactory getSqlSessionFactory() throws IOException {
         String resource = "mybatis_1_HelloWorld/conf/mybatis-config.xml";
         InputStream inputStream = Resources.getResourceAsStream(resource);

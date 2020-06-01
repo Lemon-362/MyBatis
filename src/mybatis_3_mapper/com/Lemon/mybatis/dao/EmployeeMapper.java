@@ -7,11 +7,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 import java.util.Map;
 
-/**
-    二、定义一个接口，根据id值查到数据封装成Employee对象
-        而sql映射文件本身就是为了查到数据封装成Employee对象
-        所以MyBatis提供了一个接口和xml配置文件动态绑定的功能
- */
 public interface EmployeeMapper {
 
     public Employee getEmpById(Integer id);
@@ -47,6 +42,6 @@ public interface EmployeeMapper {
 
     // 3.7.3 多条记录封装成一个map：Map<Integer, Employee>，key是记录的主键，value是记录封装后的javaBean对象
     // TODO @MapKey("id")：告诉mybatis封装这个map时，使用哪个属性作为map的key，也可以用lastName作为key
-    @MapKey("id")
+    @MapKey("lastName")
     public Map<Integer, Employee> getEmpByLastNameLikeReturnMap(String lastName);
 }

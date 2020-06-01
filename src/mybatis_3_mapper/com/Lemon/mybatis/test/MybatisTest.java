@@ -4,7 +4,6 @@ import mybatis_3_mapper.com.Lemon.mybatis.bean.Department;
 import mybatis_3_mapper.com.Lemon.mybatis.bean.Employee;
 import mybatis_3_mapper.com.Lemon.mybatis.dao.DepartmentMapper;
 import mybatis_3_mapper.com.Lemon.mybatis.dao.EmployeeMapper;
-import mybatis_3_mapper.com.Lemon.mybatis.dao.EmployeeMapperAnnotation;
 import mybatis_3_mapper.com.Lemon.mybatis.dao.EmployeeMapperPlus;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -14,46 +13,9 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-/**
- * 1. 接口式编程
- * 原生：         Dao接口    ====>   DaoImpl实现类
- * MyBatis：     Mapper接口 ====>   xxxMapper.xml配置文件
- * <p>
- * 2. SqlSession代表和数据库的一次会话，用完必须关闭
- * <p>
- * 3. SqlSession和Connection一样都是非线程安全的，每次使用都应该获取新的对象，而不能在类中定义为成员变量共享使用
- * <p>
- * 4. mapper接口没有实现类，但是MyBatis会为接口生成一个Proxy代理对象
- * （将接口和xml进行绑定）
- * EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class)
- * <p>
- * 5. 两个重要的配置文件：
- * （1）MyBatis全局配置文件（mybatis-config.xml）：
- * 包含数据库连接池信息，事务管理器信息。。。系统运行环境信息
- * （2）sql映射文件（EmployeeMapper.xml）：
- * 保存了每一个sql语句的映射信息：id唯一标识，resultType返回值类型
- * ——最终目的：MyBatis可以将sql语句抽取出来
- */
 public class MybatisTest {
-
-    /**
-     * 一、通过MyBatis获取数据库mybatis中的表tbl_employee信息
-     *
-     * @throws IOException 步骤：
-     *                     1. 设置xml配置文件（全局配置文件mybatis-config.xml），该配置文件存储数据源运行环境的4个基本信息
-     *                     2. 设置sql映射文件EmployeeMapper.xml，配置了每一个sql语句和sql的封装规则
-     *                     3. 将sql映射文件（EmployeeMapper.xml）一定要注册到全局配置文件（mybatis-config.xml）中
-     *                     4. 写主函数代码：
-     *                     1）根据xml配置文件（全局配置文件mybatis-config.xml），创建一个SqlSessionFactory对象
-     *                     2）使用sqlSession工厂，获取SqlSession实例，能直接执行已经映射的sql语句，进行CRUD操作
-     *                     TODO 一个sqlSession就代表和数据库的一次会话，用完要关闭
-     *                     3）使用sql的唯一标识id，告诉MyBatis执行哪个sql（sql语句保存在sql映射文件EmployeeMapper.xml中）
-     */
-
 
     // 公共方法：创建sqlSessionFactory对象
     public SqlSessionFactory getSqlSessionFactory() throws IOException {
@@ -139,20 +101,20 @@ public class MybatisTest {
             EmployeeMapper mapper = openSession.getMapper(EmployeeMapper.class);
 
             // 添加
-            Employee employee = new Employee(null, "jerry", "jerry@Lemon.com", "1");
-            Long addEmp = mapper.addEmp(employee);
-            System.out.println(addEmp);
-            // 3.4 获取自增主键的值
-            System.out.println(employee.getId());
+//            Employee employee = new Employee(null, "jerry", "jerry@Lemon.com", "1");
+//            Long addEmp = mapper.addEmp(employee);
+//            System.out.println(addEmp);
+//            // 3.4 获取自增主键的值
+//            System.out.println(employee.getId());
 
             // 修改
-//            Employee employee = new Employee(3, "jerry", "jerry@Lemon.com", "0");
+//            Employee employee = new Employee(2, "jerry", "jerry@Lemon.com", "0");
 //            boolean b = mapper.updateEmp(employee);
 //            System.out.println(b);
 
             // 删除
-//            Long deleteEmp = mapper.deleteEmp(3);
-//            System.out.println(deleteEmp);
+            Long deleteEmp = mapper.deleteEmp(2);
+            System.out.println(deleteEmp);
 
             // TODO 手动提交数据
             openSession.commit();
@@ -180,15 +142,15 @@ public class MybatisTest {
 
             // 3.5.1 多个参数：命名参数
 //            Employee employee = mapper.getEmpByIdAndLastName(1, "tom");
+//            System.out.println(employee);
 
             // 3.5.2 Map
 //            Map<String, Object> map = new HashMap<>();
 //            map.put("id", 1);
 //            map.put("lastName", "Tom");
-            // 3.6 使用 ${} 对 表名 进行拼接
+//            // 3.6 使用 ${} 对 表名 进行拼接
 //            map.put("tableName", "tbl_employee");
 //            Employee employee = mapper.getEmpByMap(map);
-
 //            System.out.println(employee);
 
             // 3.7.1 模糊查询（名字含有e字母的），返回集合List类型

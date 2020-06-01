@@ -1,13 +1,12 @@
-package mybatis_5_cache.com.Lemon.mybatis.test;
+package mybatis_6_ssm.com.Lemon.mybatis.test;
 
-import mybatis_5_cache.com.Lemon.mybatis.bean.Employee;
-import mybatis_5_cache.com.Lemon.mybatis.dao.EmployeeMapper;
+import mybatis_6_ssm.com.Lemon.mybatis.bean.Employee;
+import mybatis_6_ssm.com.Lemon.mybatis.dao.EmployeeMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
-
 
 import java.io.IOException;
 import java.io.InputStream;

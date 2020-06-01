@@ -19,8 +19,10 @@
       <root url="jar://$PROJECT_DIR$/lib/spring-context-5.2.3.RELEASE.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/spring-test-5.2.3.RELEASE.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/spring-core-5.2.3.RELEASE.jar!/" />
+      <root url="file://E:/Java/apache-tomcat-8.5.55-windows-x64/apache-tomcat-8.5.55/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
+    <jarDirectory url="file://E:/Java/apache-tomcat-8.5.55-windows-x64/apache-tomcat-8.5.55/lib" recursive="false" />
   </library>
 </component>

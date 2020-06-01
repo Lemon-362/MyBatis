@@ -1,4 +1,4 @@
-package mybatis_5_cache.com.Lemon.mybatis.bean;
+package mybatis_6_ssm.com.Lemon.mybatis.bean;
 
 import java.io.Serializable;
 import java.util.List;

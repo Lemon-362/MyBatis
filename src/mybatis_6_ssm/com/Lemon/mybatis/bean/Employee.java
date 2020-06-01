@@ -1,10 +1,9 @@
-package mybatis_5_cache.com.Lemon.mybatis.bean;
+package mybatis_6_ssm.com.Lemon.mybatis.bean;
 
 import org.apache.ibatis.type.Alias;
 
 import java.io.Serializable;
 
-@Alias("emp")
 public class Employee implements Serializable {
 
     private static final long serialVersionUID = 1L;

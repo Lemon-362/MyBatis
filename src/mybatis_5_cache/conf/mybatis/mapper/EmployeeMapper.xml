@@ -26,13 +26,42 @@
        所以可以将select的id改成接口方法名
        ——从而将接口方法和select标签绑定
     -->
-    <select id="getEmpById" resultType="mybatis_5_cache.com.Lemon.mybatis.bean.Employee">
+    <select id="getEmpById" resultType="mybatis_5_cache.com.Lemon.mybatis.bean.Employee"
+            useCache="true" flushCache="true">
             select id,last_name lastName,email,gender from mybatis.tbl_employee where id = #{id}
     </select>
 
     <insert id="addEmp" parameterType="mybatis_5_cache.com.Lemon.mybatis.bean.Employee"
-            useGeneratedKeys="true" keyProperty="id">
+            useGeneratedKeys="true" keyProperty="id" >
         insert into mybatis.tbl_employee(last_name,email,gender)
         values(#{lastName},#{email},#{gender})
     </insert>
+
+    <!-- TODO 5.1.2 二级缓存
+        （1）eviction：缓存的回收策略
+          —— LRU FIFO SOFT WEAK（默认LRU）
+        （2）flushInterval：缓存刷新间隔
+            缓存多长时间清空一次，默认不清空，可以设置一个毫秒值
+        （3）readOnly：是否只读
+            true：只读，所有从缓存中获取数据的操作都是只读操作，不会修改数据
+                       为了加快获取速度，直接将数据在缓存中的引用交给用户
+                 —— 不安全，速度快
+            false：非只读，获取的数据可能被修改，mybatis会利用序列化和反序列化克隆一份新的数据给用户
+                 —— 安全，速度慢
+        （4）size：缓存中存放多少个元素
+        （5）type：自定义缓存的全类名 —— 实现Cache接口即可
+     -->
+<!--    <cache eviction="FIFO" flushInterval="60000" readOnly="false" size="1024"/>-->
+
+    <!-- TODO 5.2 ehcache
+            第三方缓存整合步骤：
+        1. 导入第三方缓存包
+        2. 导入与第三方缓存整合的适配包
+        3. xxMapper.xml中定义自定义缓存<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+    -->
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+    <!-- cache-ref：引用缓存
+        在DepartmentMapper中可以使用引用缓存，指定和哪个NameSpace名称空间下的缓存一样的缓存
+    <cache-ref namespace="mybatis_5_cache.com.Lemon.mybatis.dao.EmployeeMapper"/>
+    -->
 </mapper>
