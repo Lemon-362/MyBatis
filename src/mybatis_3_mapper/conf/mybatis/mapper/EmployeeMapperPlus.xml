@@ -94,7 +94,7 @@
     </resultMap>
 
     <!-- public Employee getEmpByIdStep(Integer id); MyEmpByStep-->
-    <select id="getEmpByIdStep" resultMap="MyEmpByStep">
+    <select id="getEmpByIdStep" resultMap="MyEmpDis">
         select * from mybatis.tbl_employee where id=#{id}
     </select>
 

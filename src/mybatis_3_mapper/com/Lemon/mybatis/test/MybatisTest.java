@@ -56,35 +56,6 @@ public class MybatisTest {
     }
 
     /**
-     * 三、<mapper class=""/>
-     * 基于注解的sql注册
-     * @throws IOException
-     */
-    @Test
-    public void test3() throws IOException {
-        // 1. 获取sqlSessionFactory对象
-        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
-
-        // 2. 获取SqlSession实例
-        SqlSession openSession = sqlSessionFactory.openSession();
-
-        try {
-            // 3. 获取接口的实现类对象
-            // TODO 会为接口自动创建一个Proxy代理对象，通过代理对象去执行CRUD方法
-            EmployeeMapperAnnotation mapper = openSession.getMapper(EmployeeMapperAnnotation.class);
-
-            // 从这里可以看出mapper是一个代理类
-            System.out.println(mapper.getClass());
-
-            Employee employee = mapper.getEmpById(1);
-
-            System.out.println(employee);
-        } finally {
-            openSession.close();
-        }
-    }
-
-    /**
      * TODO 3.3 测试CRUD：一定要把所有的地址都改一下
      *  1. MyBatis允许增删改直接定义以下类型的返回值：Integer，Long，Boolean
      *  2. sqlSessionFactory.openSession()：需要手动提交数据
@@ -199,8 +170,8 @@ public class MybatisTest {
 
             // 3.9.2 association分步查询
             Employee employee = mapper.getEmpByIdStep(1);
-//            System.out.println(employee);
-//            System.out.println(employee.getDept());
+            System.out.println(employee);
+            System.out.println(employee.getDept());
 
             /**
              * 3.9.3 association延迟加载
@@ -249,7 +220,7 @@ public class MybatisTest {
             EmployeeMapperPlus mapper = openSession.getMapper(EmployeeMapperPlus.class);
 
             // 3.9.6 discriminator鉴别器
-            Employee employee = mapper.getEmpByIdStep(4);
+            Employee employee = mapper.getEmpByIdStep(3);
             System.out.println(employee);
             System.out.println(employee.getDept());
 

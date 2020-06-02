@@ -62,6 +62,7 @@
                     column="{deptId=id}"
                     fetchType="lazy"/>
     </resultMap>
+
     <!-- public Department getDeptByIdStep(Integer id); -->
     <select id="getDeptByIdStep" resultMap="MyDeptStep">
         select id, dept_name departmentName

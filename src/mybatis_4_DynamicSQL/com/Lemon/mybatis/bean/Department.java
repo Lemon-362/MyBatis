@@ -17,7 +17,6 @@ public class Department {
         this.id = id;
     }
 
-    // 3.9.4
     private List<Employee> emps;
 
     @Override

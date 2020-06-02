@@ -116,7 +116,7 @@ public class MyBatisTest {
              // 第二个会话
              Employee emp2 = mapper2.getEmpById(1);
              System.out.println(emp2);
-             openSession.close();
+             openSession2.close();
 
              // TODO 当readOnly设置成true时，才会返回true，说明拿到的是同一个对象
              System.out.println(emp1 == emp2);
