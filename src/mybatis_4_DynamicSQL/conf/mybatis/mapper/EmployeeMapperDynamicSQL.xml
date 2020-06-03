@@ -18,7 +18,7 @@
     <select id="getEmpsByConditionIf" resultType="mybatis_4_DynamicSQL.com.Lemon.mybatis.bean.Employee">
         select *
         from mybatis.tbl_employee
-        /*where 1=1*/
+        <!-- where 1=1 -->
         <!-- TODO where标签：解决sql拼串问题 -->
         <where>
             <!-- TODO test：判断表达式（OGNL) 参照PPT或官方文档

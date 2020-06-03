@@ -46,7 +46,6 @@ public class MyBatisTest {
              * 1. 在where后面先加一个绝对正确的条件，之后所有的条件都加上and
              * 2. TODO 推荐：MyBatis使用where标签，将所有的查询条件包含在内，但是只会去掉开头的第一个多出来的and或者or
              */
-
 //            Employee employee = new Employee(null, "%e%", null, null);
 //
 //            List<Employee> emps = mapper.getEmpsByConditionIf(employee);

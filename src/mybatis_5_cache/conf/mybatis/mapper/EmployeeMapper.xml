@@ -5,7 +5,7 @@
 
 
 <mapper namespace="mybatis_5_cache.com.Lemon.mybatis.dao.EmployeeMapper">
-    <cache eviction="FIFO" flushInterval="60000" readOnly="true" size="1024"/>
+<!--    <cache eviction="FIFO" flushInterval="60000" readOnly="true" size="1024"/>-->
 
     <select id="getEmpById" resultType="mybatis_5_cache.com.Lemon.mybatis.bean.Employee"
             useCache="true" flushCache="true">
@@ -39,7 +39,7 @@
         2. 导入与第三方缓存整合的适配包
         3. xxMapper.xml中定义自定义缓存<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
     -->
-<!--    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>-->
+    <cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
     <!-- cache-ref：引用缓存
         在DepartmentMapper中可以使用引用缓存，指定和哪个NameSpace名称空间下的缓存一样的缓存
     <cache-ref namespace="mybatis_5_cache.com.Lemon.mybatis.dao.EmployeeMapper"/>
